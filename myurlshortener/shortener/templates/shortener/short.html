@@ -1,0 +1,36 @@
+{% extends "shortener/base.html" %}
+{% load widget_tweaks %}
+
+{% block body %}
+
+    <div>
+        <h3 class="text-center text-info">Shorten your urls here</h3>
+
+        <form action="{% url 'get_url' %}" method="post" class="container mt-3">
+            {% csrf_token %}
+
+            <div class="form-group">
+                {{ form.url.label_tag }}
+                {{ form.url|attr:"class: form-control"}}
+            </div>
+            <div class="form-group">
+                {{ form.custom.label_tag }}
+                {{ form.custom|attr:"class: form-control"}}
+            </div>     
+
+            <input type="submit" value="Submit" class="btn btn-primary mt-3">
+
+        </form>
+    </div>
+    
+
+    {% if result %}
+        <div class="mt-5 text-center">
+            <p class="text-info fs-4">Here is your shortened url: <a href="#" class="fs-4 text-warning">{{ result }}</a></p>
+            <p class="mt-2">Share to: </p>
+        </div> 
+    {% endif %}
+
+    
+
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'shortener/base.html' %}
+
+{% block body %}
+
+    {% if error %}
+        <center><h1>Error:{{error}}</h1></center>
+    {% endif %}
+
+{% endblock %}

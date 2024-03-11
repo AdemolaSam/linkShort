@@ -1,0 +1,42 @@
+{% extends 'shortener/base.html' %}
+{% load widget_tweaks %}
+
+{% block body %}
+
+<div>
+    <h3 class="text-center mt-2">Sign Up</h3>
+    <form action="{% url 'register' %}" method="post" class="mt-5 m-3">
+        {% csrf_token %}
+
+        {% if messages is not None%}
+
+            {% for message in messages %}
+                <p class="text-warning">{{ message }}</p>
+            {% endfor %}
+
+        {% endif %}
+        <div class="form-group">
+            {{ form.username.label_tag }}
+            {{ form.username|attr:"class:form-control" }}
+        </div>
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            {{ form.email|attr:"class:form-control" }}
+        </div>
+        <div class="form-group">
+            {{ form.password.label_tag }}
+            {{ form.password|attr:"class:form-control" }}
+        </div>
+        <div class="form-group">
+            {{ form.confirm_password.label_tag }}
+            {{ form.confirm_password|attr:"class:form-control" }}
+        </div>
+
+        <input type="submit" value="Sign up" class="btn btn-primary mt-3">
+
+    </form>
+
+
+</div>
+    
+{% endblock %}
