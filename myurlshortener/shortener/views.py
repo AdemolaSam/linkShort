@@ -57,16 +57,20 @@ def logout_view(request):
     return redirect("index")
 
 @login_required
-def get_url(request):
+def shorten(request):
     if request.method == "POST":
         form = Urlform(request.POST)
         if form.is_valid():
             long_url = request.POST['url']
-            short = generate_random_chars()
-
             try:
-                Url.objects.create(link=long_url, shortened_link=short, owner=request.user)
-                form = Urlform()
+                long_url_obj = Url.objects.filter(link=long_url)
+                if long_url_obj:
+                    short = long_url_obj.shortened_link
+                else:
+                    short = generate_random_chars()
+                    Url.objects.create(link=long_url, shortened_link=short, owner=request.user)
+                    form = Urlform()
+
                 return render(request, "shortener/short.html",{"result": short, "form":form})
             except Exception as e:
                 return render(request, "shortener/error.html", {"error": e})
@@ -80,6 +84,8 @@ def goto_link(request, url):
         link_obj = Url.objects.filter(shortened_link=url).first()  # Assuming 'link' is the field name in the Url model
         if link_obj:
             link_obj.clicks += 1
+            print(link_obj.clicks)
+            link_obj.save()
             return redirect(link_obj.link)
         else:
             return render(request, "shortener/error.html", {"error": "URL not found"})
@@ -88,8 +94,13 @@ def goto_link(request, url):
         return render(request, "shortener/error.html", {"error": e})
     
 @login_required    
-def my_urls(request, id):
-    pass
+def my_urls(request):
+    try:
+        urlDetails = Url.objects.filter(owner=request.user).values()
+        return render(request, "shortener/links.html", {"urlDetails":urlDetails})
+    except Exception as e:
+        print("Error", e)
+        return render(request, "shortener/error.html", {"error": e})
 
     
 def your_view(request):
@@ -108,3 +119,6 @@ def your_view(request):
     except Exception as e:
         print(e)
         return render(request, "shortener/error.html", {"error":e})    
+    
+def catchall(request):
+    return render(request, "shortener/error.html" , {"error": "This route does not exist"})
